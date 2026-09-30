@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vault — Military-Grade File Encryption</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <!-- Background glowing ambient spheres for true glassmorphism -->
+  <div class="bg-shape bg-shape-1"></div>
+  <div class="bg-shape bg-shape-2"></div>
+  <div class="bg-shape bg-shape-3"></div>
+  <div class="grain"></div>
+
+  <!-- Header -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">◈</span>
+      <span class="brand-name">VAULT</span>
+      <span class="brand-pill">AES-256</span>
+    </div>
+    <div class="topbar-status">
+      <span class="status-dot"></span>
+      <span id="serverStatus">connecting…</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO SECTION -->
+    <section class="hero">
+      <div class="hero-badge">ENTERPRISE SECURITY · PBKDF2-HMAC-SHA256 · ZERO-KNOWLEDGE</div>
+      <h1>Zero-Knowledge File Security</h1>
+      <p class="hero-sub">Every file is sealed with an independent 16-byte cryptographic salt and 390,000 hashing rounds. Processed securely and privately in your local vault.</p>
+    </section>
+
+    <!-- MAIN DASHBOARD CONSOLE -->
+    <section class="console">
+
+      <!-- Left Panel: Lock / Unlock Controller -->
+      <div class="panel control-panel">
+        <div class="panel-header">
+          <div class="mode-switch" role="tablist">
+            <button class="mode-btn active" data-mode="encrypt" role="tab">🔒 Lock File</button>
+            <button class="mode-btn" data-mode="decrypt" role="tab">🔓 Unlock File</button>
+          </div>
+        </div>
+
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="fileInput" hidden>
+          <div class="dropzone-inner">
+            <div class="dropzone-icon">⟡</div>
+            <p class="dropzone-title" id="dropzoneTitle">Drop a file to lock</p>
+            <p class="dropzone-sub" id="dropzoneSub">or click to browse — any file type, any size up to 200MB</p>
+          </div>
+          <div class="file-chip" id="fileChip" hidden>
+            <div class="file-chip-icon">📄</div>
+            <div class="file-chip-info">
+              <p class="file-chip-name" id="fileChipName"></p>
+              <p class="file-chip-size" id="fileChipSize"></p>
+            </div>
+            <button class="file-chip-remove" id="fileChipRemove" title="Remove file">✕</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-header">
+            <label for="passwordInput" id="passwordLabel">COMBINATION / MASTER KEY</label>
+          </div>
+          <div class="password-row">
+            <input type="password" id="passwordInput" placeholder="Choose a password" autocomplete="off">
+            <button class="icon-btn" id="togglePassword" title="Show/hide password">◉</button>
+            <button class="icon-btn" id="generatePassword" title="Generate strong password">⚄</button>
+          </div>
+        </div>
+
+        <!-- Strength dial (shown in Lock mode) -->
+        <div class="strength-block" id="strengthBlock">
+          <div class="strength-meta">
+            <span class="strength-title">Entropy Rating:</span>
+            <span class="strength-label" id="strengthLabel">—</span>
+          </div>
+          <div class="strength-dial">
+            <div class="dial-tick" data-tick="0"></div>
+            <div class="dial-tick" data-tick="1"></div>
+            <div class="dial-tick" data-tick="2"></div>
+            <div class="dial-tick" data-tick="3"></div>
+            <div class="dial-tick" data-tick="4"></div>
+            <div class="dial-tick" data-tick="5"></div>
+          </div>
+          <p class="strength-hint" id="strengthHint"></p>
+        </div>
+
+        <button class="submit-btn" id="submitBtn" disabled>
+          <span id="submitBtnText">Lock file</span>
+        </button>
+        <p class="micro-note">Passwords are never stored. Losing yours means the file is unrecoverable by design.</p>
+      </div>
+
+      <!-- Right Panel: Ledger & Verification -->
+      <div class="panel ledger-panel">
+        <div class="ledger-header">
+          <div class="ledger-title-group">
+            <h2>Activity &amp; Integrity Ledger</h2>
+            <span class="ledger-sub">Cryptographic receipts &amp; real-time event logs</span>
+          </div>
+        </div>
+
+        <div class="receipt-slot" id="receiptSlot">
+          <div class="receipt-empty">
+            <div class="receipt-empty-icon">🛡️</div>
+            <p class="receipt-empty-title">No Transactions Yet</p>
+            <p class="receipt-empty-sub">Lock or unlock a file to view its cryptographic integrity receipt.</p>
+          </div>
+        </div>
+
+        <div class="ledger-log-wrapper">
+          <div class="ledger-log-header">
+            <span>EVENT AUDIT TRAIL</span>
+          </div>
+          <div class="ledger-log" id="ledgerLog"></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- MECHANISM SECTION -->
+    <section class="mechanism">
+      <div class="mech-header">
+        <span class="mech-eyebrow">SECURITY ARCHITECTURE</span>
+        <h2>Cryptographic Pipeline</h2>
+      </div>
+      <div class="mech-grid">
+        <div class="mech-card">
+          <div class="mech-tag">01 · SALT</div>
+          <h3>Unique Salt</h3>
+          <p>A random 16-byte salt is generated per file so identical passwords never generate identical keys.</p>
+        </div>
+        <div class="mech-card">
+          <div class="mech-tag">02 · DERIVE</div>
+          <h3>Key Derivation</h3>
+          <p>PBKDF2-HMAC-SHA256 stretches your password through 390,000 iterations into a 256-bit key.</p>
+        </div>
+        <div class="mech-card">
+          <div class="mech-tag">03 · SEAL</div>
+          <h3>Fernet Encryption</h3>
+          <p>AES-128-CBC encryption combined with an HMAC-SHA256 authentication tag guarantees integrity.</p>
+        </div>
+        <div class="mech-card">
+          <div class="mech-tag">04 · VERIFY</div>
+          <h3>SHA-256 Audit</h3>
+          <p>Cryptographic checksums are recorded before and after processing to prove zero data corruption.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Secure File Vault · Enterprise AES-256 Authenticated Encryption · Local Zero-Knowledge Processing</p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
